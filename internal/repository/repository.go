@@ -2,11 +2,12 @@ package repository
 
 import (
 	"fmt"
+	"reflect"
+	"strings"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/traPtitech/game3-back/internal/pkg/util"
-	"reflect"
-	"strings"
 )
 
 type Repository struct {
@@ -26,7 +27,7 @@ func (r *Repository) Patch(tableName string, idName string, idValue interface{},
 
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
-		if field.Kind() == reflect.Ptr && !field.IsNil() {
+		if field.Kind() == reflect.Pointer && !field.IsNil() {
 			dbTag := util.ToSnakeCase(t.Field(i).Name)
 			var paramValue interface{}
 

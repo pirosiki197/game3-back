@@ -1,8 +1,9 @@
 module github.com/traPtitech/game3-back // NOTE: github.com/ORGANIZATION/REPO_NAME などが好ましい
 
-go 1.20
+go 1.24.2
 
 require (
+	github.com/cshum/vipsgen v1.1.2
 	github.com/getkin/kin-openapi v0.122.0
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/google/uuid v1.4.0

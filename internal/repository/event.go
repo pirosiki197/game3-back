@@ -3,6 +3,8 @@ package repository
 import (
 	"database/sql"
 	"errors"
+	"time"
+
 	"github.com/traPtitech/game3-back/internal/domain"
 	"github.com/traPtitech/game3-back/openapi/models"
 )
@@ -21,16 +23,27 @@ func (r *Repository) GetEvents() ([]*models.Event, error) {
 	return events, nil
 }
 
-func (r *Repository) PostEvent(event *models.PostEventRequest) (err error) {
-	var imageData []byte
-	if event.Image != nil {
-		imageData, err = event.Image.Bytes()
-		if err != nil {
-			return err
-		}
-	}
+type EventWithImage struct {
+	Slug                      string    `db:"slug"`
+	Title                     string    `db:"title"`
+	Date                      time.Time `db:"date"`
+	GameSubmissionPeriodStart time.Time `db:"game_submission_period_start"`
+	GameSubmissionPeriodEnd   time.Time `db:"game_submission_period_end"`
+	Image                     []byte    `db:"image"`
+}
 
-	if _, err = r.db.Exec("INSERT INTO event (slug, title, date, game_submission_period_start, game_submission_period_end, image) VALUES (?, ?, ?, ?, ?, ?)", event.Slug, event.Title, event.Date, event.GameSubmissionPeriodStart, event.GameSubmissionPeriodEnd, imageData); err != nil {
+func (r *Repository) CreateEvent(event EventWithImage) (err error) {
+	_, err = r.db.Exec(
+		"INSERT INTO `event` (`slug`, `title`, `date`, `game_submission_period_start`, `game_submission_period_end`, `image`) "+
+			"VALUES (?, ?, ?, ?, ?, ?)",
+		event.Slug,
+		event.Title,
+		event.Date,
+		event.GameSubmissionPeriodStart,
+		event.GameSubmissionPeriodEnd,
+		event.Image,
+	)
+	if err != nil {
 		return err
 	}
 
@@ -68,8 +81,17 @@ func (r *Repository) GetEvent(eventSlug models.EventSlugInPath) (*models.Event, 
 	return event, nil
 }
 
-func (r *Repository) PatchEvent(eventSlug models.EventSlugInPath, event *models.PatchEventRequest) error {
-	return r.Patch("event", "slug", eventSlug, event)
+type PatchEventParam struct {
+	Slug                      *string    `db:"slug"`
+	Title                     *string    `db:"title"`
+	Date                      *time.Time `db:"date"`
+	GameSubmissionPeriodStart *time.Time `db:"game_submission_period_start"`
+	GameSubmissionPeriodEnd   *time.Time `db:"game_submission_period_end"`
+	Image                     *[]byte    `db:"image"`
+}
+
+func (r *Repository) PatchEvent(eventSlug models.EventSlugInPath, event PatchEventParam) error {
+	return r.Patch("event", "slug", eventSlug, &event)
 }
 
 func (r *Repository) DeleteEvent(eventSlug models.EventSlugInPath) error {
