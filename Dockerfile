@@ -10,6 +10,7 @@ ADD https://github.com/coord-e/magicpak/releases/download/v1.4.0/magicpak-x86_64
 RUN chmod +x /usr/bin/magicpak
 
 # Install libvips build dependencies and build libvips from source
+WORKDIR /scripts
 RUN apt-get update && apt-get install -y \
   build-essential \
   pkg-config \
@@ -22,16 +23,8 @@ RUN apt-get update && apt-get install -y \
   ninja-build \
   wget && \
   rm -rf /var/lib/apt/lists/*
-
-WORKDIR /tmp
-ARG LIBVIPS_VERSION="8.17.2"
-RUN wget "https://github.com/libvips/libvips/releases/download/v${LIBVIPS_VERSION}/vips-${LIBVIPS_VERSION}.tar.xz" && \
-  tar xf "vips-${LIBVIPS_VERSION}.tar.xz" && \
-  cd "vips-${LIBVIPS_VERSION}" && \
-  meson setup build --prefix / && \
-  cd build && \
-  meson compile && \
-  meson install
+COPY scripts/install-libvips.sh .
+RUN ./install-libvips.sh
 
 # Build the Go application
 WORKDIR /app
