@@ -4,16 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/traPtitech/game3-back/internal/pkg/apperrors"
-	"github.com/traPtitech/game3-back/internal/pkg/enum"
-	"github.com/traPtitech/game3-back/internal/pkg/util"
-	"github.com/traPtitech/game3-back/openapi/models"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/labstack/echo/v4"
+	"github.com/traPtitech/game3-back/internal/pkg/apperrors"
+	"github.com/traPtitech/game3-back/internal/pkg/enum"
+	"github.com/traPtitech/game3-back/internal/pkg/util"
+	"github.com/traPtitech/game3-back/openapi/models"
 )
 
 type GetDiscordUserInfoResponse struct {
