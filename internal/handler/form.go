@@ -15,6 +15,7 @@ func extractFileFromForm(c echo.Context, formFileName string) (multipart.File, e
 		if err == http.ErrMissingFile {
 			return nil, nil
 		}
+
 		return nil, err
 	}
 

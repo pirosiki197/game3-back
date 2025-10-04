@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/oapi-codegen/runtime/types"
@@ -10,7 +12,6 @@ import (
 	"github.com/traPtitech/game3-back/internal/pkg/enum"
 	"github.com/traPtitech/game3-back/internal/pkg/util"
 	"github.com/traPtitech/game3-back/openapi/models"
-	"net/http"
 )
 
 func (h *Handler) GetGames(c echo.Context, params models.GetGamesParams) error {
@@ -20,7 +21,7 @@ func (h *Handler) GetGames(c echo.Context, params models.GetGamesParams) error {
 	}
 
 	if params.IncludeUnpublished != nil && *params.IncludeUnpublished {
-		if !(params.UserId != nil && user != nil && *params.UserId == user.ID) && !role.IsAdmin() {
+		if (params.UserId == nil || user == nil || *params.UserId != user.ID) && !role.IsAdmin() {
 			return echo.NewHTTPError(http.StatusForbidden, "you can't get other user's unpublished game")
 		}
 	}
